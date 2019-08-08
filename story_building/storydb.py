@@ -10,11 +10,10 @@ class StoryDB:
     
     def pop_story(self):
         cursor = self.con.cursor()
-        query = "select * from stories_all where is_full is not True order by update_time desc, insert_time desc limit 1"
+        query = "select * from stories_all where is_full <> 1 order by updated_at desc, created_at desc limit 1"
         cursor.execute(query)
-        contents = cursor.fetch()
-        str = Story(id = contents[0])
-        str.form_story(contents[2])
+        contents = cursor.fetchone()
+        str = Story(id=contents[0],created_at=contents[4],updated_at=contents[5],content = json.loads(contents[2]))
         return str
         
     def update(self,story):
@@ -26,8 +25,8 @@ class StoryDB:
     def upload(self,story):
         cursor = self.con.cursor()
         if story.id is None:
-            query ="insert into stories_all(story_content,is_full) values(%s,%s)"
-            cursor.execute(query,(json.dumps(story.compose_array()),story.is_full))
+            query ="insert into stories_all(title,story_content,is_full) values(%s,%s,%s)"
+            cursor.execute(query,(story.compose_title(),json.dumps(story.compose_array()),story.is_full))
             
     def fetch_stories(self,limit,offset):
         cursor = self.con.cursor()
@@ -39,7 +38,7 @@ class StoryDB:
             story = Story(id=result[0],created_at=result[4],updated_at=result[5],content = json.loads(result[2]))
             stories.append(story)
         return stories
-            
-        
-        
+    
+    
+ 
     

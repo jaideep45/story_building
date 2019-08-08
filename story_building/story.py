@@ -119,7 +119,7 @@ class Story:
     
     def form_story(self,array):
         for word in array:
-            status = self.add_word(word)
+            status = self.add_word(str(word))
         if status == 'story is full':
             return 'error'
         else:
